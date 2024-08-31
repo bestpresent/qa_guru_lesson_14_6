@@ -1,12 +1,21 @@
-from selene.support.shared import browser
-from selenium import webdriver
+import os
+import shutil
+import pytest
+import zipfile
 
-options = webdriver.Chrome.options()
-prefs = {
-    'download.default_directory': '/path/to/save/downloads',
-    'download.prompt_for_download': False,
-    'download.directory_upgrade': True,
-    'safebrowsing.enabled': False,
-    'profile.default_content_settings.popups': 0,
-    'profile.default_content_settings.media_playback_allow_popups': 0,
-}
+from script_os import FOLDER_DIR, FILES_DIR, TMP_DIR
+
+
+def test_text_in_downloaded_file_by_click():
+    options = webdriver.ChromeOptions()
+    prefs = {
+        "download.default_directory": TMP_DIR,
+        "download.prompt_for_download": False
+    }
+    options.add_experimental_option("prefs", prefs)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    browser.config.driver = driver
+
+    browser.open("https://github.com/pytest-dev/pytest/blob/main/README.rst")
+    browser.element("[data-testid='download-raw-button']").click()
+    time.sleep(4)
